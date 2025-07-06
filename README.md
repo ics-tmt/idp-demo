@@ -33,3 +33,11 @@ Example response:
 ```json
 {"operation":"add","x":1,"y":2,"result":3}
 ```
+
+## Testing
+
+Run tests with pytest:
+
+```bash
+pytest
+```
