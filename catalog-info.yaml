@@ -5,7 +5,7 @@ metadata:
   description: IDP Testing.
   annotations:
     # gitpod.io/host: gitpod.io
-    github.com/project-slug: ics-tmt/idp-demp
+    github.com/project-slug: ics-tmt/idp-dem0
     jira/project-key: 'SCRUM'
     jira/label: backstage-component:idpDemo
 
