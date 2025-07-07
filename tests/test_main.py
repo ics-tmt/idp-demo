@@ -50,3 +50,15 @@ def test_divide_by_zero_operation():
     )
     assert response.status_code == 400
     assert response.json()["detail"] == "Cannot divide by zero"
+
+
+def test_is_prime_true():
+    response = client.get("/is_prime", params={"n": 17})
+    assert response.status_code == 200
+    assert response.json() == {"n": 17, "is_prime": True}
+
+
+def test_is_prime_false():
+    response = client.get("/is_prime", params={"n": 18})
+    assert response.status_code == 200
+    assert response.json() == {"n": 18, "is_prime": False}

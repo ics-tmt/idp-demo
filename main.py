@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from calculator import add, subtract, multiply, divide
+from prime import is_prime
 
 app = FastAPI()
 
@@ -19,3 +20,9 @@ def calculate(operation: str, x: float, y: float):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"operation": operation, "x": x, "y": y, "result": result}
+
+
+@app.get("/is_prime")
+def check_prime(n: int):
+    result = is_prime(n)
+    return {"n": n, "is_prime": result}
