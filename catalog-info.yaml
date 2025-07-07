@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: IDP-Demo
+  description: IDP Testing.
+  annotations:
+    # gitpod.io/host: gitpod.io
+    github.com/project-slug: ics-tmt/idp-demp
+    jira/project-key: 'SCRUM'
+    jira/label: backstage-component:idpDemo
+
+spec:
+  type: application
+  owner: ICS
+  lifecycle: experimental
