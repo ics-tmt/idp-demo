@@ -13,13 +13,22 @@ demorepo
 Install dependencies:
 
 ```bash
-pip install fastapi uvicorn
+pip install fastapi uvicorn requests python-dotenv pytest
 ```
 
-Start the API server:
+### Backend
+
+Start the API server (ensure you have copied `.env.example` to `.env` and filled in your Jira credentials):
 
 ```bash
+cp .env.example .env
 uvicorn main:app --reload
+```
+
+#### Jira Summary API Endpoint
+
+```bash
+curl "http://127.0.0.1:8000/jira-summary?jql=project=MYPROJECT"
 ```
 
 Use the API:
