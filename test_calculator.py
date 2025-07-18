@@ -30,3 +30,28 @@ def test_is_even():
     assert is_even(3) is False
     assert is_even(0) is True
     assert is_even(-2) is True
+
+def test_main_even_and_odd():
+    import sys
+    import subprocess
+
+    # Test with an even input
+    result = subprocess.run(
+        [sys.executable, 'calculator.py'], input='4\n', text=True, capture_output=True
+    )
+    assert '4 is even.' in result.stdout
+
+    # Test with an odd input
+    result = subprocess.run(
+        [sys.executable, 'calculator.py'], input='3\n', text=True, capture_output=True
+    )
+    assert '3 is odd.' in result.stdout
+
+def test_main_invalid_input():
+    import sys
+    import subprocess
+
+    result = subprocess.run(
+        [sys.executable, 'calculator.py'], input='abc\n', text=True, capture_output=True
+    )
+    assert 'Invalid input; please enter an integer.' in result.stdout
