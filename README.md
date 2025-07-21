@@ -35,9 +35,41 @@ Example response:
 ```
 
 ## Testing
-
 Run tests with pytest:
 
 ```bash
 pytest
+```
+
+## JIRA Story Subtasks Application
+
+This repository includes a backend service and a React frontend to fetch and display the number of JIRA sub-tasks broken down by story.
+
+### Backend
+
+The backend is a FastAPI service that connects to JIRA, counts the number of sub-tasks per story, and exposes the results via a REST endpoint.
+
+```bash
+# install dependencies
+pip install -r backend/requirements.txt
+
+# set environment variables for your JIRA instance
+export JIRA_URL=https://your-domain.atlassian.net
+export JIRA_USER=your-email@example.com
+export JIRA_TOKEN=your-api-token
+
+# run the API server
+uvicorn backend.app:app --reload
+```
+
+The endpoint is available at `GET /stories/subtasks-count`.
+
+### Frontend
+
+A React application displays the story/sub-task counts in a table and bar chart. To start the frontend:
+
+```bash
+cd frontend
+npm install
+npm start
 ```
