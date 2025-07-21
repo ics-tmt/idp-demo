@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>JIRA Story Ticket Count</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background-color: #f2f2f2; }
+    canvas { max-width: 600px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>JIRA Story Ticket Count</h1>
+  <div id="root"></div>
+  <script type="text/javascript">
+    const { useState, useEffect, useRef } = React;
+
+    function App() {
+      const [project, setProject] = useState('');
+      const [data, setData] = useState({});
+      const chartRef = useRef(null);
+
+      useEffect(() => {
+        if (data && chartRef.current) {
+          const ctx = chartRef.current.getContext('2d');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: Object.keys(data),
+              datasets: [{
+                label: 'Sub-task Count',
+                data: Object.values(data),
+                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: { y: { beginAtZero: true } }
+            }
+          });
+        }
+      }, [data]);
+
+      const fetchData = () => {
+        fetch(`http://localhost:8000/stories/tickets/count?project=${encodeURIComponent(project)}`)
+          .then(res => res.json())
+          .then(setData)
+          .catch(console.error);
+      };
+
+      return (
+        React.createElement('div', null,
+          React.createElement('input', {
+            type: 'text',
+            placeholder: 'Project Key (e.g., TEST)',
+            value: project,
+            onChange: e => setProject(e.target.value)
+          }),
+          React.createElement('button', { onClick: fetchData }, 'Fetch'),
+          Object.keys(data).length > 0 && React.createElement('table', null,
+            React.createElement('thead', null,
+              React.createElement('tr', null,
+                React.createElement('th', null, 'Story'),
+                React.createElement('th', null, 'Sub-task Count')
+              )
+            ),
+            React.createElement('tbody', null,
+              Object.entries(data).map(([key, count]) =>
+                React.createElement('tr', { key },
+                  React.createElement('td', null, key),
+                  React.createElement('td', null, count)
+                )
+              )
+            )
+          ),
+          Object.keys(data).length > 0 && React.createElement('canvas', { ref: chartRef })
+        )
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      React.createElement(App)
+    );
+  </script>
+</body>
+</html>
