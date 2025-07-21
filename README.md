@@ -1,43 +1,34 @@
-# idp-demo
-demorepo
+# Jira Tickets Dashboard
 
-## Scripts
+This repository contains a **backend** API and a **frontend** React application to display the number of Jira tickets broken down by parent stories.
 
-- `calculator.py`: Example calculator script.
-- `get_current_time.py`: Script to get the current local date and time.
-- `best_of_two.py`: Script to find the maximum (best) of two numbers.
-- `main.py`: FastAPI wrapper around the calculator script exposing a `/calculate` endpoint.
+## Backend
 
-## API
+The backend is a **FastAPI** application that queries Jira's REST API to count sub-tasks or tickets grouped by their parent story.
 
-Install dependencies:
+### Setup & Run
 
 ```bash
-pip install fastapi uvicorn
+cd backend
+pip install -r requirements.txt
+
+# set Jira environment variables:
+export JIRA_BASE_URL=https://your-domain.atlassian.net
+export JIRA_USERNAME=your-email@example.com
+export JIRA_API_TOKEN=your-api-token
+
+# start the API server
+uvicorn app.main:app --reload
 ```
 
-Start the API server:
+## Frontend
+
+The frontend is a **Vite**-powered React application that fetches data from the backend and renders a table and a bar chart.
+
+### Setup & Run
 
 ```bash
-uvicorn main:app --reload
-```
-
-Use the API:
-
-```bash
-curl "http://127.0.0.1:8000/calculate?operation=add&x=1&y=2"
-```
-
-Example response:
-
-```json
-{"operation":"add","x":1,"y":2,"result":3}
-```
-
-## Testing
-
-Run tests with pytest:
-
-```bash
-pytest
+cd frontend
+npm install
+npm run dev
 ```
