@@ -41,3 +41,45 @@ Run tests with pytest:
 ```bash
 pytest
 ```
+
+## Jira Ticket Analysis
+
+This section describes how to use the Jira ticket analysis API and UI.
+
+### Backend API
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start the API server:
+
+```bash
+uvicorn jira_analysis.api:app --reload --port 8000
+```
+
+Access the endpoint:
+
+```
+GET http://localhost:8000/counts?base_url=<JIRA_URL>&username=<USER>&token=<TOKEN>&jql=<JQL_QUERY>
+```
+
+Example:
+
+```bash
+curl "http://localhost:8000/counts?base_url=https://jira.example.com&username=user&token=token&jql=project=MYPROJ"
+```
+
+### React UI
+
+The UI is located in the `ui` folder. To start:
+
+```bash
+cd ui
+npm install
+npm start
+```
+
+The UI will fetch data from the backend and display a table and bar chart.
