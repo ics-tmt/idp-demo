@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jira Story Ticket Dashboard</title>
+  <!-- React and Babel -->
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    // read project_key from URL query params for default
+    const params = new URLSearchParams(window.location.search);
+    window.projectKey = params.get('project_key') || '';
+    const { useState, useEffect } = React;
+
+    function App() {
+      const [data, setData] = useState({});
+
+      useEffect(() => {
+        fetch(`/api/story-ticket-counts?project_key=${encodeURIComponent(window.projectKey || '')}`)
+          .then((res) => res.json())
+          .then(setData)
+          .catch(console.error);
+      }, []);
+
+      return (
+        <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+          <h1>Jira Story Ticket Counts</h1>
+          <table border="1" cellPadding="8" cellSpacing="0">
+            <thead>
+              <tr><th>Issue Type</th><th>Count</th></tr>
+            </thead>
+            <tbody>
+              {Object.entries(data).map(([type, count]) => (
+                <tr key={type}><td>{type}</td><td>{count}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <canvas id="chart" width="600" height="300" style={{ marginTop: '20px' }}></canvas>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+
+    // Render chart after data loads
+    function drawChart(data) {
+      const ctx = document.getElementById('chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            label: 'Ticket Count',
+            data: Object.values(data),
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    // initial draw when data is loaded
+    fetch(`/api/story-ticket-counts?project_key=${encodeURIComponent(window.projectKey || '')}`)
+      .then((res) => res.json())
+      .then(drawChart)
+      .catch(console.error);
+  </script>
+</body>
+</html>
