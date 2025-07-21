@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jira Tickets By Story</title>
+  <script src="https://unpkg.com/react/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    const { useState } = React;
+    const {
+      BarChart,
+      Bar,
+      XAxis,
+      YAxis,
+      CartesianGrid,
+      Tooltip,
+      ResponsiveContainer
+    } = Recharts;
+
+    function App() {
+      const [data, setData] = useState({});
+      const [jiraUrl, setJiraUrl] = useState('');
+      const [jql, setJql] = useState('');
+      const [username, setUsername] = useState('');
+      const [apiToken, setApiToken] = useState('');
+
+      const fetchData = () => {
+        axios.get('/jira/tickets_by_story', {
+          params: { jira_url: jiraUrl, jql, username, api_token: apiToken }
+        })
+        .then(res => setData(res.data))
+        .catch(console.error);
+      };
+
+      const rows = Object.entries(data).map(([story, count]) => ({ story, count }));
+
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'Jira Tickets By Story'),
+          React.createElement('div', null,
+            React.createElement('input', { placeholder: 'Jira URL', value: jiraUrl, onChange: e => setJiraUrl(e.target.value) }),
+            React.createElement('input', { placeholder: 'JQL', value: jql, onChange: e => setJql(e.target.value) }),
+            React.createElement('input', { placeholder: 'Username', value: username, onChange: e => setUsername(e.target.value) }),
+            React.createElement('input', { placeholder: 'API Token', type: 'password', value: apiToken, onChange: e => setApiToken(e.target.value) }),
+            React.createElement('button', { onClick: fetchData }, 'Fetch')
+          ),
+          React.createElement('table', { border: 1, cellPadding: 5 },
+            React.createElement('thead', null,
+              React.createElement('tr', null,
+                React.createElement('th', null, 'Story'),
+                React.createElement('th', null, 'Count')
+              )
+            ),
+            React.createElement('tbody', null,
+              rows.map(({ story, count }) =>
+                React.createElement('tr', { key: story },
+                  React.createElement('td', null, story),
+                  React.createElement('td', null, count)
+                )
+              )
+            )
+          ),
+          React.createElement(ResponsiveContainer, { width: '100%', height: 300 },
+            React.createElement(BarChart, { data: rows },
+              React.createElement(CartesianGrid, { strokeDasharray: '3 3' }),
+              React.createElement(XAxis, { dataKey: 'story' }),
+              React.createElement(YAxis, null),
+              React.createElement(Tooltip, null),
+              React.createElement(Bar, { dataKey: 'count', fill: '#8884d8' })
+            )
+          )
+        )
+      );
+    }
+
+    ReactDOM.render(React.createElement(App), document.getElementById('root'));
+  </script>
+</body>
+</html>
