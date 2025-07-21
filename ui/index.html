@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jira Story Breakdown</title>
+  <!-- React and dependencies -->
+  <script src="https://unpkg.com/react/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom/umd/react-dom.development.js" crossorigin></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Babel for JSX support -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    function App() {
+      const [data, setData] = React.useState({});
+
+      React.useEffect(() => {
+        // Prompt user for tickets JSON array (each with key and story)
+        let tickets = [];
+        try {
+          const input = window.prompt(
+            'Paste tickets JSON array (e.g. [{"key":"T1","story":"S1"},...])',
+            '[]'
+          );
+          tickets = JSON.parse(input || '[]');
+        } catch {
+          tickets = [];
+        }
+        fetch('/jira/story/count', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tickets),
+        })
+          .then(res => res.json())
+          .then(json => {
+            setData(json);
+            drawChart(json);
+          });
+      }, []);
+
+      const drawChart = dataMap => {
+        const ctx = document.getElementById('chart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: Object.keys(dataMap),
+            datasets: [
+              {
+                label: 'Tickets per Story',
+                data: Object.values(dataMap),
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+              },
+            ],
+          },
+        });
+      };
+
+      return (
+        <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+          <h1>Jira Story Breakdown</h1>
+          <table border="1" cellPadding="5" cellSpacing="0">
+            <thead>
+              <tr>
+                <th>Story</th>
+                <th>Ticket Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(data).map(([story, count]) => (
+                <tr key={story}>
+                  <td>{story}</td>
+                  <td>{count}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <canvas id="chart" width="600" height="400" style={{ marginTop: '20px' }}></canvas>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
