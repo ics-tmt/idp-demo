@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jira Tickets by Story</n>
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    textarea { width: 100%; height: 100px; }
+    table { border-collapse: collapse; width: 50%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>Jira Tickets by Story</h1>
+  <p>Paste an array of ticket objects (each with <code>key</code> and <code>story</code>) below:</p>
+  <textarea id="input"></textarea><br />
+  <button id="submit">Submit</button>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useRef, useEffect } = React;
+
+    function App() {
+      const [counts, setCounts] = useState({});
+      const chartRef = useRef(null);
+      const chartInstance = useRef(null);
+
+      useEffect(() => {
+        if (!chartRef.current) return;
+        const labels = Object.keys(counts);
+        const data = Object.values(counts);
+        if (chartInstance.current) {
+          chartInstance.current.data.labels = labels;
+          chartInstance.current.data.datasets[0].data = data;
+          chartInstance.current.update();
+        } else {
+          chartInstance.current = new Chart(chartRef.current, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: '# of Tickets',
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+              }]
+            }
+          });
+        }
+      }, [counts]);
+
+      return (
+        <div>
+          {Object.keys(counts).length > 0 && (
+            <>
+              <table>
+                <thead><tr><th>Story</th><th>Count</th></tr></thead>
+                <tbody>
+                  {Object.entries(counts).map(([story, cnt]) => (
+                    <tr key={story}><td>{story}</td><td>{cnt}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+              <canvas ref={chartRef} width="400" height="200"></canvas>
+            </>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+
+    document.getElementById('submit').onclick = () => {
+      let tickets;
+      try {
+        tickets = JSON.parse(document.getElementById('input').value);
+      } catch (e) {
+        alert('Invalid JSON');
+        return;
+      }
+      fetch('/tickets_by_story', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tickets }),
+      })
+        .then(res => res.json())
+        .then(data => setCounts(data.counts))
+        .catch(err => console.error(err));
+    };
+  </script>
+</body>
+</html>

@@ -41,3 +41,31 @@ Run tests with pytest:
 ```bash
 pytest
 ```
+
+## Jira Tickets by Story Service
+
+This service provides an endpoint to count JIRA tickets broken down by story names.
+
+### API Endpoint
+
+POST `/tickets_by_story`
+
+Request JSON body:
+```json
+{
+  "tickets": [
+    {"key": "JIRA-1", "story": "Story A"},
+    {"key": "JIRA-2", "story": "Story B"}
+  ]
+}
+```
+
+Response JSON:
+```json
+{ "counts": { "Story A": 1, "Story B": 1 } }
+```
+
+### React UI
+
+Open `frontend/index.html` in a browser while the API server is running (e.g., at http://localhost:8000).
+Paste an array of ticket objects into the textarea and click **Submit** to view a table and bar chart of ticket counts by story.
