@@ -41,3 +41,37 @@ Run tests with pytest:
 ```bash
 pytest
 ```
+
+## Jira Story Ticket Count
+
+### Backend API
+
+Install dependencies:
+
+```bash
+pip install -r backend/requirements.txt
+```
+
+Set environment variables:
+
+```bash
+export JIRA_URL=https://your-domain.atlassian.net
+export JIRA_USERNAME=your_email@example.com
+export JIRA_TOKEN=your_api_token
+```
+
+Start the API server:
+
+```bash
+uvicorn backend.app:app --reload --host 0.0.0.0 --port 8000
+```
+
+Use the API:
+
+```bash
+curl "http://127.0.0.1:8000/stories/tickets/count?project=PROJECTKEY"
+```
+
+### React UI
+
+Open `frontend/index.html` in your browser (the UI will fetch data from `http://localhost:8000` by default).
