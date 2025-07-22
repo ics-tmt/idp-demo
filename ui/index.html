@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Jira Tickets by Story</title>
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/javascript">
+function App() {
+  const [data, setData] = React.useState(null);
+  React.useEffect(() => {
+    // Update URL parameters as needed
+    const params = new URLSearchParams({
+      base_url: 'https://your-jira-instance',
+      username: '<user>',
+      token: '<api_token>',
+      jql: 'issuetype = Sub-task'
+    });
+    fetch(`/stories/ticket_count?${params}`)
+      .then(res => res.json())
+      .then(setData)
+      .catch(console.error);
+  }, []);
+  if (!data) return React.createElement('div', null, 'Loading...');
+  const labels = Object.keys(data);
+  const counts = Object.values(data);
+  return React.createElement('div', null,
+    React.createElement('h1', null, 'Jira Tickets by Story'),
+    React.createElement('table', null,
+      React.createElement('thead', null,
+        React.createElement('tr', null,
+          React.createElement('th', null, 'Story'),
+          React.createElement('th', null, 'Ticket Count')
+        )
+      ),
+      React.createElement('tbody', null,
+        labels.map((story, i) =>
+          React.createElement('tr', { key: story },
+            React.createElement('td', null, story),
+            React.createElement('td', null, counts[i])
+          )
+        )
+      )
+    ),
+    React.createElement('canvas', { id: 'chart', ref: canvas => {
+      if (!canvas) return;
+      new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Ticket Count', data: counts, backgroundColor: 'rgba(75,192,192,0.4)' }] },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+    } })
+  );
+}
+ReactDOM.render(React.createElement(App), document.getElementById('root'));
+</script>
+</body>
+</html>
