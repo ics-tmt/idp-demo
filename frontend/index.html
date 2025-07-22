@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Jira Ticket Analysis</title>
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/javascript">
+const { useState } = React;
+const { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } = Recharts;
+
+function App() {
+  const [data, setData] = useState([]);
+  const [project, setProject] = useState('');
+  const [error, setError] = useState(null);
+
+  const fetchData = () => {
+    fetch(`/api/ticket_counts?project_key=${project}`)
+      .then(res => res.json())
+      .then(setData)
+      .catch(e => setError(e.toString()));
+  };
+
+  return (
+    React.createElement('div', { style: { padding: '20px' } },
+      React.createElement('h1', null, 'Jira Ticket Analysis'),
+      React.createElement('input', {
+        type: 'text',
+        placeholder: 'Project Key',
+        value: project,
+        onChange: e => setProject(e.target.value)
+      }),
+      React.createElement('button', { onClick: fetchData }, 'Load'),
+      error && React.createElement('div', { style: { color: 'red' } }, error),
+      data.length > 0 && React.createElement('table', { border: 1, cellPadding: 5, style: { marginTop: '20px' } },
+        React.createElement('thead', null,
+          React.createElement('tr', null,
+            React.createElement('th', null, 'Story Key'),
+            React.createElement('th', null, 'Summary'),
+            React.createElement('th', null, 'Ticket Count')
+          )
+        ),
+        React.createElement('tbody', null,
+          data.map(item =>
+            React.createElement('tr', { key: item.story_key },
+              React.createElement('td', null, item.story_key),
+              React.createElement('td', null, item.story_summary),
+              React.createElement('td', null, item.ticket_count)
+            )
+          )
+        )
+      ),
+      data.length > 0 && React.createElement(BarChart, {
+        width: 600,
+        height: 300,
+        data,
+        margin: { top: 20, right: 30, left: 20, bottom: 5 }
+      },
+        React.createElement(CartesianGrid, { strokeDasharray: "3 3" }),
+        React.createElement(XAxis, { dataKey: "story_key" }),
+        React.createElement(YAxis, null),
+        React.createElement(Tooltip, null),
+        React.createElement(Bar, { dataKey: "ticket_count", fill: "#8884d8" })
+      )
+    )
+  );
+}
+
+ReactDOM.render(
+  React.createElement(App),
+  document.getElementById('root')
+);
+</script>
+</body>
+</html>
