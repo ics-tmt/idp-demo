@@ -1,43 +1,31 @@
-# idp-demo
-demorepo
-
-## Scripts
-
-- `calculator.py`: Example calculator script.
-- `get_current_time.py`: Script to get the current local date and time.
-- `best_of_two.py`: Script to find the maximum (best) of two numbers.
-- `main.py`: FastAPI wrapper around the calculator script exposing a `/calculate` endpoint.
-
-## API
-
-Install dependencies:
-
+# Jira Stories Counter
+This project provides a backend API to count Jira stories per epic, and a React-based UI to visualize the results.
+## Backend
+1. Install Python dependencies:
 ```bash
-pip install fastapi uvicorn
+cd backend
+pip install -r requirements.txt
 ```
-
-Start the API server:
-
+2. Set environment variables (or pass as query parameters):
+- `JIRA_URL`
+- `JIRA_USER`
+- `JIRA_TOKEN`
+- `JIRA_PROJECT_KEY`
+3. Run the API:
 ```bash
 uvicorn main:app --reload
 ```
-
-Use the API:
-
+4. API endpoint:
 ```bash
-curl "http://127.0.0.1:8000/calculate?operation=add&x=1&y=2"
+GET /api/v1/storycounts
 ```
-
-Example response:
-
-```json
-{"operation":"add","x":1,"y":2,"result":3}
-```
-
-## Testing
-
-Run tests with pytest:
-
+## Frontend
+1. Install Node.js dependencies:
 ```bash
-pytest
+cd frontend
+npm install
+```
+2. Start the development server:
+```bash
+npm start
 ```
