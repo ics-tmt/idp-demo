@@ -13,7 +13,7 @@ demorepo
 Install dependencies:
 
 ```bash
-pip install fastapi uvicorn
+pip install fastapi uvicorn requests
 ```
 
 Start the API server:
@@ -40,4 +40,35 @@ Run tests with pytest:
 
 ```bash
 pytest
+```
+
+## Jira Story Subtask API
+
+Configure environment variables and start the API server to expose story-subtask breakdown:
+
+```bash
+export JIRA_BASE_URL=https://your-domain.atlassian.net
+export JIRA_USER=your-email@example.com
+export JIRA_API_TOKEN=your-api-token
+uvicorn main:app --reload
+```
+
+Endpoint:
+
+`GET /jira/story-subtasks?project_key=PROJECTKEY`
+
+Response:
+
+```json
+[{"story_key":"PROJECTKEY-1","summary":"...","subtask_count":2}, ...]
+```
+
+## Frontend UI
+
+A React-based UI is provided under `frontend`. To run the UI:
+
+```bash
+cd frontend
+npm install
+npm start
 ```
