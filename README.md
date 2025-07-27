@@ -10,10 +10,10 @@ demorepo
 
 ## API
 
-Install dependencies:
+Install Python dependencies:
 
 ```bash
-pip install fastapi uvicorn
+pip install -r requirements.txt
 ```
 
 Start the API server:
@@ -40,4 +40,41 @@ Run tests with pytest:
 
 ```bash
 pytest
+```
+
+## Ticket Statistics API
+
+Count JIRA tickets broken down by story via a JSON API.
+
+### Endpoint
+
+```http
+POST /count_by_story
+Content-Type: application/json
+
+{
+  "tickets": [
+    { "id": "T1", "story": "Story A" },
+    { "id": "T2", "story": "Story B" },
+    { "id": "T3", "story": "Story A" }
+  ]
+}
+```
+
+Example successful response:
+
+```json
+{ "counts": { "Story A": 2, "Story B": 1 } }
+```
+
+## Frontend UI
+
+A React application is provided in the `frontend/` directory. It displays the ticket counts in a table and bar chart.
+
+To run the UI:
+
+```bash
+cd frontend
+npm install
+npm start
 ```

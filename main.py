@@ -3,6 +3,10 @@ from calculator import add, subtract, multiply, divide
 
 app = FastAPI()
 
+from jira_stats.api import router as jira_router
+
+app.include_router(jira_router)
+
 @app.get("/calculate")
 def calculate(operation: str, x: float, y: float):
     operations = {
