@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jira Story Ticket Counts</title>
+  <!-- React and dependencies via CDN -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/javascript">
+    const { useState, useEffect } = React;
+    const { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } = Recharts;
+
+    function App() {
+      const [data, setData] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+
+      useEffect(() => {
+        axios.get('/stories/ticket-count')
+          .then(res => setData(res.data))
+          .catch(err => setError(err.message))
+          .finally(() => setLoading(false));
+      }, []);
+
+      if (loading) return React.createElement('div', null, 'Loading...');
+      if (error) return React.createElement('div', null, `Error: ${error}`);
+
+      return (
+        React.createElement('div', null,
+          React.createElement('h1', null, 'Jira Story Ticket Counts'),
+          React.createElement(ResponsiveContainer, { width: '100%', height: 300 },
+            React.createElement(BarChart, { data: data, margin: { top: 20, right: 30, left: 20, bottom: 5 } },
+              React.createElement(CartesianGrid, { strokeDasharray: '3 3' }),
+              React.createElement(XAxis, { dataKey: 'key' }),
+              React.createElement(YAxis, null),
+              React.createElement(Tooltip, null),
+              React.createElement(Bar, { dataKey: 'ticket_count', fill: '#8884d8' })
+            )
+          ),
+          React.createElement('table', null,
+            React.createElement('thead', null,
+              React.createElement('tr', null,
+                React.createElement('th', null, 'Story Key'),
+                React.createElement('th', null, 'Summary'),
+                React.createElement('th', null, 'Ticket Count')
+              )
+            ),
+            React.createElement('tbody', null,
+              data.map(item => React.createElement('tr', { key: item.key },
+                React.createElement('td', null, item.key),
+                React.createElement('td', null, item.summary),
+                React.createElement('td', null, item.ticket_count)
+              ))
+            )
+          )
+        )
+      );
+    }
+
+    ReactDOM.render(
+      React.createElement(App),
+      document.getElementById('root')
+    );
+  </script>
+</body>
+</html>

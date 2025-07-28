@@ -1,43 +1,32 @@
-# idp-demo
-demorepo
+# Jira Story Ticket Count
 
-## Scripts
+This project provides a FastAPI backend to fetch Jira stories and count their sub-tasks, and a React frontend to display the results.
 
-- `calculator.py`: Example calculator script.
-- `get_current_time.py`: Script to get the current local date and time.
-- `best_of_two.py`: Script to find the maximum (best) of two numbers.
-- `main.py`: FastAPI wrapper around the calculator script exposing a `/calculate` endpoint.
+## Features
 
-## API
+- Fetch Jira stories via Jira REST API.
+- Count sub-tasks for each story.
+- Expose API endpoint at `/stories/ticket-count`.
+- Serve a React UI that shows a bar chart and table of results.
 
-Install dependencies:
+## Setup
 
+1. Copy the example environment file and fill in your Jira settings:
+   ```bash
+   cp .env.example .env
+   ```
+2. Install Python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the backend server:
+   ```bash
+   uvicorn backend.app:app --reload
+   ```
+4. Open your browser at `http://localhost:8000` to view the React UI.
+
+## Running tests
+Run the Python unit tests using unittest:
 ```bash
-pip install fastapi uvicorn
-```
-
-Start the API server:
-
-```bash
-uvicorn main:app --reload
-```
-
-Use the API:
-
-```bash
-curl "http://127.0.0.1:8000/calculate?operation=add&x=1&y=2"
-```
-
-Example response:
-
-```json
-{"operation":"add","x":1,"y":2,"result":3}
-```
-
-## Testing
-
-Run tests with pytest:
-
-```bash
-pytest
+python -m unittest backend/tests/test_app.py
 ```
