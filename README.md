@@ -28,6 +28,22 @@ Use the API:
 curl "http://127.0.0.1:8000/calculate?operation=add&x=1&y=2"
 ```
 
+Add the Jira ticket analysis endpoint:
+
+```bash
+curl -X POST "http://127.0.0.1:8000/analyze" \
+     -H 'Content-Type: application/json' \
+     -d '{"stories":[{"id":"S1","tickets":["JIRA-1","JIRA-2"]}]}'
+```
+
+Example response:
+
+```json
+{
+  "results":[{"id":"S1","count":2}]
+}
+```
+
 Example response:
 
 ```json
@@ -40,4 +56,8 @@ Run tests with pytest:
 
 ```bash
 pytest
+
+# UI
+
+Open `ui/index.html` in a browser to load a simple React-based UI for pasting story data, viewing a table of counts, and a bar chart.
 ```
