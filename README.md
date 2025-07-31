@@ -1,43 +1,48 @@
-# idp-demo
-demorepo
+# Jira Ticket Counter
 
-## Scripts
+This project provides a Python-based REST API to count Jira tickets broken down by stories, and a React UI to visualize the results in a table and bar chart.
 
-- `calculator.py`: Example calculator script.
-- `get_current_time.py`: Script to get the current local date and time.
-- `best_of_two.py`: Script to find the maximum (best) of two numbers.
-- `main.py`: FastAPI wrapper around the calculator script exposing a `/calculate` endpoint.
+## Backend (Python FastAPI)
 
-## API
-
-Install dependencies:
-
+### Setup
 ```bash
-pip install fastapi uvicorn
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-Start the API server:
-
+### Run
 ```bash
-uvicorn main:app --reload
+cd backend
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Use the API:
+### API
 
+- **POST /tickets/count_by_story**
+  - Request body: JSON array of tickets, each with `id` and `story_id` fields.
+  - Response: JSON array of objects `{ story_id: string, count: number }`.
+
+Example:
 ```bash
-curl "http://127.0.0.1:8000/calculate?operation=add&x=1&y=2"
+curl -X POST http://localhost:8000/tickets/count_by_story \
+  -H 'Content-Type: application/json' \
+  -d '[{"id":"T1","story_id":"S1"},{"id":"T2","story_id":"S1"},{"id":"T3","story_id":"S2"}]'
 ```
 
-Example response:
+## Frontend (React)
 
-```json
-{"operation":"add","x":1,"y":2,"result":3}
-```
-
-## Testing
-
-Run tests with pytest:
-
+### Setup
 ```bash
-pytest
+cd frontend
+npm install
 ```
+
+### Run
+```bash
+cd frontend
+npm start
+```
+
+The React app runs on port 3000 and proxies API requests to the backend.
