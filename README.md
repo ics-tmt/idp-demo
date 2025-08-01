@@ -1,43 +1,23 @@
-# idp-demo
-demorepo
+# Jira Stories Subtask Counter
 
-## Scripts
+## Backend
 
-- `calculator.py`: Example calculator script.
-- `get_current_time.py`: Script to get the current local date and time.
-- `best_of_two.py`: Script to find the maximum (best) of two numbers.
-- `main.py`: FastAPI wrapper around the calculator script exposing a `/calculate` endpoint.
-
-## API
-
-Install dependencies:
+### Setup
 
 ```bash
-pip install fastapi uvicorn
+cd backend
+pip install -r requirements.txt
+export JIRA_URL=<your-jira-url>
+export JIRA_USERNAME=<your-username>
+export JIRA_TOKEN=<your-api-token>
 ```
 
-Start the API server:
+### Run
 
 ```bash
-uvicorn main:app --reload
+uvicorn backend.app:app --reload
 ```
 
-Use the API:
+## Frontend
 
-```bash
-curl "http://127.0.0.1:8000/calculate?operation=add&x=1&y=2"
-```
-
-Example response:
-
-```json
-{"operation":"add","x":1,"y":2,"result":3}
-```
-
-## Testing
-
-Run tests with pytest:
-
-```bash
-pytest
-```
+See [frontend/README.md](frontend/README.md)
