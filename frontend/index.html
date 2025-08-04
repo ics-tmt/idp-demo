@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jira Tickets by Story</title>
+  <!-- React and ReactDOM -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <!-- Chart.js for graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Babel for JSX transformation in browser -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    function App() {
+      const [data, setData] = React.useState({});
+
+      React.useEffect(() => {
+        // Example payload; integrate with real data source as needed
+        const sampleTickets = [
+          { id: '1', story_id: 'STORY-1' },
+          { id: '2', story_id: 'STORY-1' },
+          { id: '3', story_id: 'STORY-2' },
+        ];
+        fetch('http://localhost:8000/tickets/count', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(sampleTickets),
+        })
+          .then((res) => res.json())
+          .then(setData)
+          .catch(console.error);
+      }, []);
+
+      const labels = Object.keys(data);
+      const counts = labels.map((key) => data[key]);
+
+      React.useEffect(() => {
+        if (!labels.length) return;
+        const ctx = document.getElementById('chart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Tickets',
+                data: counts,
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+              },
+            ],
+          },
+        });
+      }, [data]);
+
+      return (
+        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+          <h1>Tickets by Story</h1>
+          <table border="1" cellPadding="8" cellSpacing="0">
+            <thead>
+              <tr>
+                <th>Story ID</th>
+                <th>Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {labels.map((id) => (
+                <tr key={id}>
+                  <td>{id}</td>
+                  <td>{data[id]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <canvas id="chart" width="600" height="300"></canvas>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
