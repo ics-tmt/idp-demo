@@ -50,3 +50,39 @@ def test_divide_by_zero_operation():
     )
     assert response.status_code == 400
     assert response.json()["detail"] == "Cannot divide by zero"
+
+
+def test_weather_endpoint(monkeypatch):
+    expected = {
+        "location": {"display_name": "Sample", "city": "Sample"},
+        "units": "metric",
+        "observation": {
+            "temperature": {"value": 20, "unit": "C"},
+            "as_of": None,
+        },
+    }
+
+    def fake_get_weather(lat, lon, units="imperial"):
+        assert lat == 10
+        assert lon == -20
+        assert units == "metric"
+        return expected
+
+    monkeypatch.setattr("main.get_weather", fake_get_weather)
+
+    response = client.get(
+        "/weather", params={"lat": 10, "lon": -20, "units": "metric"}
+    )
+    assert response.status_code == 200
+    assert response.json() == expected
+
+
+def test_weather_endpoint_invalid_params(monkeypatch):
+    def fake_get_weather(lat, lon, units="imperial"):
+        raise ValueError("Latitude must be between -90 and 90")
+
+    monkeypatch.setattr("main.get_weather", fake_get_weather)
+
+    response = client.get("/weather", params={"lat": 200, "lon": 0})
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Latitude must be between -90 and 90"
